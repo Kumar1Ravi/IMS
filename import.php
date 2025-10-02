@@ -21,18 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $vendorMsg = "❌ Failed to upload Vendor Report. Please try again.";
             if (isset($_FILES['vendor_file'])) {
-                 switch ($_FILES['vendor_file']['error']) {
-                    case UPLOAD_ERR_INI_SIZE:
-                    case UPLOAD_ERR_FORM_SIZE:
-                        $vendorMsg .= " File too large.";
-                        break;
-                    case UPLOAD_ERR_NO_FILE:
-                        $vendorMsg = "❌ No Vendor Report file was selected.";
-                        break;
-                    default:
-                        $vendorMsg .= " Error code: " . $_FILES['vendor_file']['error'];
-                        break;
-                }
+                  switch ($_FILES['vendor_file']['error']) {
+                     case UPLOAD_ERR_INI_SIZE:
+                     case UPLOAD_ERR_FORM_SIZE:
+                         $vendorMsg .= " File too large.";
+                         break;
+                     case UPLOAD_ERR_NO_FILE:
+                         $vendorMsg = "❌ No Vendor Report file was selected.";
+                         break;
+                     default:
+                         $vendorMsg .= " Error code: " . $_FILES['vendor_file']['error'];
+                         break;
+                 }
             }
         }
     }
@@ -72,193 +72,272 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMS - Import Reports</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>Import Data - Invoice Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
-    :root {
-        --primary-blue: #007bff;
-        --primary-blue-dark: #0056b3;
-        --secondary-gray: #6c757d;
-        --light-bg: #e9ecef;
-        --white: #ffffff;
-        --success-green: #28a745;
-        --error-red: #dc3545;
-        --border-color: #ced4da;
-        --shadow-light: rgba(0, 0, 0, 0.08);
-        --shadow-medium: rgba(0, 0, 0, 0.15);
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+.container {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 700px;
+    width: 100%;
+}
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.header h1 {
+    color: #007bff;
+    font-size: 26px;
+    margin-bottom: 5px;
+}
+.header p {
+    color: #555;
+    font-size: 14px;
+}
+.upload-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.upload-card {
+    flex: 1 1 48%;
+    background: #f7f9ff;
+    padding: 20px;
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    text-align: center;
+}
+.upload-card h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+.upload-card i {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #007bff;
+}
+.upload-card input[type="file"] {
+    display: none;
+}
+.file-input-label, .upload-card button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+.file-input-label {
+    background: #007bff;
+    color: #fff;
+}
+.file-input-label:hover {
+    background: #0056d2;
+}
+.upload-card button {
+    background: #28a745;
+    color: #fff;
+}
+.upload-card button:hover {
+    background: #1e7e34;
+}
+.message {
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+.message.success {
+    background: #d4edda;
+    color: #155724;
+}
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+.info-section {
+    font-size: 13px;
+    color: #555;
+    background: #f1f3f6;
+    padding: 15px;
+    border-radius: 8px;
+}
+.info-section ul {
+    padding-left: 18px;
+    margin: 0;
+}
+.info-section li {
+    margin-bottom: 5px;
+}
+@media (max-width: 600px) {
+    .upload-section {
+        flex-direction: column;
     }
-
-    body {
-        font-family: 'Roboto', sans-serif;
-        background: linear-gradient(135deg, var(--light-bg) 0%, #dcdcdc 100%);
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        color: #333;
-        box-sizing: border-box;
+    .upload-card {
+        flex: 1 1 100%;
     }
-
-    .container {
-        /* Reduced max-width for a more compact design */
-        width: 100%;
-        max-width: 650px; 
-        background: var(--white);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 25px var(--shadow-medium);
-        text-align: center;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .container:hover {
-        transform: translateY(-5px);
-    }
-
-    h2 {
-        color: var(--primary-blue);
-        /* Reduced margin-bottom and font-size */
-        margin-bottom: 20px;
-        font-weight: 700;
-        font-size: 1.8rem;
-        position: relative;
-        padding-bottom: 8px;
-    }
-
-    h2::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%);
-        width: 50px;
-        height: 2px;
-        background-color: var(--primary-blue);
-        border-radius: 2px;
-    }
-
-    .form-group {
-        /* Reduced margin and padding */
-        margin-bottom: 20px;
-        text-align: left;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 15px;
-        background-color: #f9f9f9;
-        box-shadow: 0 1px 6px var(--shadow-light);
-    }
-
-    label {
-        display: block;
-        /* Reduced font-size */
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: #444;
-        font-size: 1rem;
-    }
-
-    input[type="file"] {
-        display: block;
-        width: calc(100% - 22px);
-        padding: 8px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        margin-bottom: 12px;
-        font-size: 0.95rem;
-        background-color: var(--white);
-        transition: border-color 0.3s, box-shadow 0.3s;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    input[type="file"]:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        outline: none;
-    }
-    
-    .upload-button {
-        width: 100%;
-        /* Reduced padding and font-size */
-        padding: 10px 15px;
-        background-color: var(--primary-blue);
-        color: var(--white);
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
-    }
-
-    .upload-button:hover {
-        background-color: var(--primary-blue-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 12px rgba(0, 123, 255, 0.3);
-    }
-
-    .upload-button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-    }
-
-    .msg {
-        margin-top: 25px;
-        padding: 12px 15px;
-        border-radius: 8px;
-        font-weight: 500;
-        text-align: center;
-        line-height: 1.4;
-        font-size: 0.9rem;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-    }
-
-    .msg.success {
-        background-color: #d4edda;
-        color: var(--success-green);
-        border: 1px solid #c3e6cb;
-    }
-
-    .msg.error {
-        background-color: #f8d7da;
-        color: var(--error-red);
-        border: 1px solid #f5c6cb;
-    }
+}
 </style>
 </head>
 <body>
-
 <div class="container">
-    <h2><span style="color: #4CAF50;">IMS</span> - Import Reports 🚀</h2>
-    
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="vendor_file">Vendor Invoice Report (.csv)</label>
-            <input type="file" name="vendor_file" id="vendor_file" accept=".csv">
-            <button type="submit" name="upload_vendor" class="upload-button">Upload Vendor File</button>
+    <div class="header">
+        <h1><i class="fas fa-upload"></i> Import Data</h1>
+        <p>Upload Vendor & GIS Reports securely</p>
+    </div>
+
+    <div class="upload-section">
+        <!-- Vendor Upload -->
+        <div class="upload-card">
+            <h2><i class="fas fa-file-alt"></i> Vendor Report</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="vendor_file" id="vendor_file" required>
+                <label for="vendor_file" class="file-input-label"><i class="fas fa-folder-open"></i> Choose File</label>
+                <button type="submit" name="upload_vendor"><i class="fas fa-upload"></i> Upload</button>
+            </form>
         </div>
 
-        <div class="form-group">
-            <label for="gis_file">New GIS Report (.csv)</label>
-            <input type="file" name="gis_file" id="gis_file" accept=".csv">
-            <button type="submit" name="upload_gis" class="upload-button">Upload GIS File</button>
+        <!-- GIS Upload -->
+        <div class="upload-card">
+            <h2><i class="fas fa-map-marked-alt"></i> GIS Report</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="gis_file" id="gis_file" required>
+                <label for="gis_file" class="file-input-label"><i class="fas fa-folder-open"></i> Choose File</label>
+                <button type="submit" name="upload_gis"><i class="fas fa-upload"></i> Upload</button>
+            </form>
         </div>
-    </form>
-    
-    <?php 
-    if($vendorMsg) { 
-        $msgClass = strpos($vendorMsg, '❌') !== false ? 'error' : 'success';
-        echo "<p class='msg $msgClass'>$vendorMsg</p>"; 
-    } 
-    if($gisMsg) {
-        $msgClass = strpos($gisMsg, '❌') !== false ? 'error' : 'success';
-        echo "<p class='msg $msgClass'>$gisMsg</p>";
-    }
+    </div>
+
+    <!-- Messages -->
+    <?php
+    if($vendorMsg) echo "<div class='message ".(strpos($vendorMsg,'❌')!==false?'error':'success')."'>$vendorMsg</div>";
+    if($gisMsg) echo "<div class='message ".(strpos($gisMsg,'❌')!==false?'error':'success')."'>$gisMsg</div>";
     ?>
-</div>
 
+    <div class="info-section">
+        <strong>Upload Guidelines:</strong>
+        <ul>
+            <li>Formats: CSV, XLSX, XLS</li>
+            <li>Max File Size: 10MB</li>
+            <li>Ensure proper headers</li>
+            <li>Vendor files: SAP ID, GIS ID, invoice details</li>
+            <li>GIS files: Employee & travel info</li>
+            <li>Files processed automatically</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+// File drag and drop functionality
+function setupDragAndDrop(uploadAreaId, fileInputId, fileInfoId) {
+    const uploadArea = document.getElementById(uploadAreaId);
+    const fileInput = document.getElementById(fileInputId);
+    const fileInfo = document.getElementById(fileInfoId);
+
+    // Drag and drop events
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            displayFileInfo(files[0], fileInfo);
+        }
+    });
+
+    // File selection change
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            displayFileInfo(e.target.files[0], fileInfo);
+        }
+    });
+}
+
+function displayFileInfo(file, fileInfoElement) {
+    const size = (file.size / 1024 / 1024).toFixed(2);
+    fileInfoElement.innerHTML = `
+        <p><strong>File Name:</strong> ${file.name}</p>
+        <p><strong>File Size:</strong> ${size} MB</p>
+        <p><strong>File Type:</strong> ${file.type || 'Unknown'}</p>
+    `;
+    fileInfoElement.style.display = 'block';
+}
+
+// Setup drag and drop for both upload areas
+setupDragAndDrop('vendorUploadArea', 'vendor_file', 'vendorFileInfo');
+setupDragAndDrop('gisUploadArea', 'gis_file', 'gisFileInfo');
+
+// Form submission with progress indication
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const progressBar = this.closest('.upload-section').querySelector('.upload-progress');
+        const progressFill = progressBar.querySelector('.progress-fill');
+        const progressText = progressBar.querySelector('.progress-text');
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+
+        progressBar.style.display = 'block';
+
+        // Simulate progress (in real app, this would be actual upload progress)
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                progressText.textContent = 'Processing...';
+            }
+            progressFill.style.width = progress + '%';
+        }, 200);
+    });
+});
+
+// Add loading animation to upload sections
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadSections = document.querySelectorAll('.upload-section');
+    uploadSections.forEach((section, index) => {
+        setTimeout(() => {
+            section.style.opacity = '0';
+            section.style.animation = 'none';
+            setTimeout(() => {
+                section.style.transition = 'opacity 0.5s ease';
+                section.style.opacity = '1';
+            }, 100);
+        }, index * 200);
+    });
+});
+</script>
 </body>
 </html>

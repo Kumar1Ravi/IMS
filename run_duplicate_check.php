@@ -2,8 +2,8 @@
 include 'db_connection.php'; // $conn from SQL Server
 
 if ($conn === false) {
-    // Redirect with an error status if connection fails
-    header("Location: analysis.php?status=error");
+    // Redirect on connection error
+    header("Location: analysis.php?status=error"); 
     exit();
 }
 
@@ -14,22 +14,19 @@ $procedures = [
     "EXEC dbo.sp_UpdateDuplicateStatus"
 ];
 
-$success = true;
 foreach ($procedures as $proc) {
     $stmt = sqlsrv_query($conn, $proc);
     if ($stmt === false) {
-        $success = false;
-        // Redirect with an error status if a procedure fails
+        // Redirect on procedure error
+        // Assuming your main page is 'analysis.php' or rename 'Temp.php'
         header("Location: analysis.php?status=error&proc=" . urlencode($proc));
         exit();
     }
 }
 
-// Close connection
 sqlsrv_close($conn);
 
-// Redirect with a success parameter if all procedures executed
-header("Location: analysis.php?status=success&tab=duplicateFind");
+// ✅ SUCCESS REDIRECT: Redirect back to the main page with a 'status=success' parameter
+header("Location: analysis.php?status=success"); 
 exit();
 ?>
-
